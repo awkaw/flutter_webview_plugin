@@ -12,6 +12,6 @@ public class WebAppInterface {
         data.put("command", command);
         data.put("param", param);
 
-        FlutterWebviewPlugin.channel.invokeMethod("exec", data);
+        FlutterWebviewPlugin.channel.invokeMethod("onExec", data);
     }
 }
