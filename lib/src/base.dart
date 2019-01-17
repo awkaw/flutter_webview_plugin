@@ -23,6 +23,7 @@ class FlutterWebviewPlugin {
 
   final _channel = const MethodChannel(_kChannel);
 
+  final _onExec = StreamController<WebViewExec>.broadcast();
   final _onDestroy = StreamController<Null>.broadcast();
   final _onUrlChanged = StreamController<String>.broadcast();
   final _onStateChanged = StreamController<WebViewStateChanged>.broadcast();
@@ -32,6 +33,9 @@ class FlutterWebviewPlugin {
 
   Future<Null> _handleMessages(MethodCall call) async {
     switch (call.method) {
+      case 'onExec':
+        _onExec.add(WebViewExec(call.arguments['command'], call.arguments['param']));
+        break;
       case 'onDestroy':
         _onDestroy.add(null);
         break;
@@ -56,6 +60,9 @@ class FlutterWebviewPlugin {
         break;
     }
   }
+  
+  /// Listening the OnExec LifeCycle Event for Android
+  Stream<WebViewExec> get onExec => _onExec.stream;
 
   /// Listening the OnDestroy LifeCycle Event for Android
   Stream<Null> get onDestroy => _onDestroy.stream;
@@ -182,6 +189,7 @@ class FlutterWebviewPlugin {
 
   /// Close all Streams
   void dispose() {
+    _onExec.close();
     _onDestroy.close();
     _onUrlChanged.close();
     _onStateChanged.close();
@@ -247,4 +255,11 @@ class WebViewHttpError {
 
   final String url;
   final String code;
+}
+
+class WebViewExec {
+  WebViewExec(this.command, this.param);
+
+  final String command;
+  final String param;
 }
