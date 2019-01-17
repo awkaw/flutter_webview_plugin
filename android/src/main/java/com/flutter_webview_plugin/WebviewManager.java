@@ -221,6 +221,7 @@ class WebviewManager {
         webView.getSettings().setAllowFileAccessFromFileURLs(allowFileURLs);
         webView.getSettings().setAllowUniversalAccessFromFileURLs(allowFileURLs);
         
+        webView.addJavascriptInterface(new WebAppInterface(), "FlutterAppAndroid");
         webView.getSettings().setGeolocationEnabled(allowLocation);
 
         if(allowLocation){
