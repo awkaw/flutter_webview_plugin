@@ -127,6 +127,7 @@ flutterWebviewPlugin.launch(url,
 
 ### Webview Events
 
+- `Stream<WebViewExec>` onExec
 - `Stream<Null>` onDestroy
 - `Stream<String>` onUrlChanged
 - `Stream<WebViewStateChanged>` onStateChanged
