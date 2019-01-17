@@ -3,9 +3,11 @@ package com.flutter_webview_plugin;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.webkit.JavascriptInterface;
+
 public class WebAppInterface {
 
-    //@JavascriptInterface
+    @JavascriptInterface
     public void exec(String command, String param) {
 
         Map<String, Object> data = new HashMap<>();
