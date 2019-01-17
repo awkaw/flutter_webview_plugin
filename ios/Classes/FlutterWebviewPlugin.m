@@ -3,7 +3,7 @@
 static NSString *const CHANNEL_NAME = @"flutter_webview_plugin";
 
 // UIWebViewDelegate
-@interface FlutterWebviewPlugin() <WKNavigationDelegate, UIScrollViewDelegate> {
+@interface FlutterWebviewPlugin() <WKNavigationDelegate, UIScrollViewDelegate, WKScriptMessageHandler> {
     BOOL _enableAppScheme;
     BOOL _enableZoom;
 }
@@ -103,8 +103,11 @@ static NSString *const CHANNEL_NAME = @"flutter_webview_plugin";
     } else {
         rc = self.viewController.view.bounds;
     }
+	
+    WKWebViewConfiguration *theConfiguration = [[WKWebViewConfiguration alloc] init];
+    [theConfiguration.userContentController addScriptMessageHandler:self name:@"FlutterAppIOS"];
 
-    self.webview = [[WKWebView alloc] initWithFrame:rc];
+    self.webview = [[WKWebView alloc] initWithFrame:rc configuration:theConfiguration];
     self.webview.navigationDelegate = self;
     self.webview.scrollView.delegate = self;
     self.webview.hidden = [hidden boolValue];
@@ -116,6 +119,17 @@ static NSString *const CHANNEL_NAME = @"flutter_webview_plugin";
     [self.viewController.view addSubview:self.webview];
 
     [self navigate:call];
+}
+
+- (void)userContentController:(WKUserContentController *)userContentController 
+                        didReceiveScriptMessage:(WKScriptMessage *)message {
+
+    NSDictionary *sentData = (NSDictionary *)message.body;
+
+    NSString *commandString = sentData[@"message"];
+    NSString *paramString = sentData[@"param"];
+
+    [channel invokeMethod:@"onExec" arguments:@{@"command": commandString, @"param": paramString}];
 }
 
 - (CGRect)parseRect:(NSDictionary *)rect {
